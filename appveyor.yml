@@ -1,0 +1,33 @@
+environment:
+  matrix:
+    - JAVA_VERSION: "8"
+    - JAVA_VERSION: "11"
+
+build:
+  image: Visual Studio 2019
+  project: TGT
+
+install:
+  - ps: >-
+      choco install jdk$env:JAVA_VERSION -y;
+      refreshenv
+  - cmd: java -version
+
+build_script:
+  - cmd: >-
+      if exist compile-jar.bat (
+        compile-jar.bat
+      ) else (
+        echo "compile-jar.bat not found, attempting shell script..."
+      )
+  - ps: >-
+      if (Test-Path compile-jar.sh) {
+        bash compile-jar.sh
+      } else {
+        Write-Host 'compile-jar.sh not found'
+      }
+
+artifacts:
+  - path: TGT.jar
+    name: TGT-${env:APPVEYOR_REPO_BRANCH}-${env:JAVA_VERSION}
+    type: zip
