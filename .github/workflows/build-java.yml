@@ -1,0 +1,33 @@
+name: Build TGT JAR
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Make the compile script executable
+      run: chmod +x compile-jar.sh
+
+    - name: Build the JAR
+      run: |
+        ./compile-jar.sh
+
+    - name: Upload JAR artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: TGT
+        path: |
+          *.jar
+          src/*.jar
